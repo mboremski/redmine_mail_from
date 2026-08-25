@@ -1,5 +1,3 @@
-require_dependency 'mailer'
-
 module RedmineMailFrom
   module MailerModelPatch
 

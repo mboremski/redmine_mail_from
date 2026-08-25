@@ -2,7 +2,9 @@
 
 This plugin adds user name and/or mail address to the "From:" header field of the notification mail.
 
-This plugin works with Redmine 3.0.0 or later.
+This plugin works with Redmine 6.1.0 or later.
+
+For older Redmine versions use version 3.0.2 of this plugin.
 
 ## Installation
 
