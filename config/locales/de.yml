@@ -1,0 +1,3 @@
+de:
+  redmine_mail_from_setting_internal_domains: Interne Mail-Domänen
+  redmine_mail_from_text_internal_domains: "Empfänger in diesen Domänen sehen den Tickettitel im Betreff; bei allen anderen wird der Betreff auf die Ticketkennung gekürzt. Eine Domäne je Zeile oder durch Komma getrennt. Verglichen wird auf genaue Gleichheit – Unterdomänen sind einzeln einzutragen. Die Domäne der Absenderadresse gilt immer als intern."

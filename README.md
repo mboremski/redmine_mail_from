@@ -37,10 +37,17 @@ The reminder or the notification by anonymous is sent with
 
 ### Subject shortening
 
-For issue notifications the plugin compares the mail domains of the recipients
-with the domain of the generated "From:" address. If any of them differs, the
-issue subject is dropped and only `[Project - Tracker #123] ` remains as the
-mail subject.
+For issue notifications the plugin drops the issue subject from the mail
+subject whenever a recipient is external, leaving only
+`[Project - Tracker #123] `.
+
+Internal domains are configured under "Administration -> Plugins ->
+Redmine Mail From", one domain per line or separated by commas or semicolons.
+Case and a leading `@` do not matter. The domain of the emission address always
+counts as internal, so an empty setting keeps the previous behaviour of
+comparing against the "From:" address. Domains are compared for equality --
+subdomains need their own entry, and a recipient whose domain cannot be
+determined counts as external.
 
 ### Notes
 

@@ -1,0 +1,6 @@
+<p>
+  <label for="settings_internal_domains"><%= l(:redmine_mail_from_setting_internal_domains) %></label>
+  <%= text_area_tag 'settings[internal_domains]', settings['internal_domains'],
+                    :id => 'settings_internal_domains', :cols => 40, :rows => 4 %>
+  <em class="info"><%= l(:redmine_mail_from_text_internal_domains) %></em>
+</p>

@@ -37,13 +37,13 @@ module RedmineMailFrom
 
         # headers[:to] may be a User, an array of Users and/or strings, nil or
         # empty. Mailer.email_addresses resolves all of them to addresses.
-        from_domain = mail_from_domain(from)
+        internal_domains = mail_from_internal_domains(from)
         to_domains = self.class.email_addresses(headers[:to]).map do |address|
           mail_from_domain(address)
         end
 
-        if from_domain.blank? || to_domains.empty? ||
-           to_domains.any? { |domain| domain != from_domain }
+        if to_domains.empty? ||
+           to_domains.any? { |domain| domain.blank? || internal_domains.exclude?(domain) }
           headers[:subject] =
             "[#{@issue.project.name} - #{@issue.tracker.name} ##{@issue.id}] "
         end
@@ -60,6 +60,20 @@ module RedmineMailFrom
     end
 
     private
+
+    # Domains whose recipients may see the issue subject: the configured list
+    # plus the domain of the emission address, which is internal by
+    # definition. An empty setting therefore behaves exactly like the previous
+    # comparison against the From header instead of silently shortening every
+    # subject. Compared for equality -- subdomains need their own entry.
+    def mail_from_internal_domains(from_header = nil)
+      configured =
+        Setting.plugin_redmine_mail_from['internal_domains'].to_s
+               .downcase.split(/[\s,;]+/)
+               .map { |domain| domain.strip.sub(/\A@/, '') }
+
+      (configured << mail_from_domain(from_header)).reject(&:blank?).uniq
+    end
 
     # Domain of a mail address, downcased, or nil.
     #

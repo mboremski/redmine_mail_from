@@ -1,3 +1,3 @@
-# English strings go here for Rails i18n
 en:
-  # my_label: "My label"
+  redmine_mail_from_setting_internal_domains: Internal mail domains
+  redmine_mail_from_text_internal_domains: "Recipients in these domains keep the issue subject in the mail subject line; for all others it is shortened to the issue identifier. One domain per line, or separated by commas. Exact match only - subdomains have to be listed separately. The domain of the emission address is always treated as internal."
