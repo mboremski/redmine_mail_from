@@ -35,10 +35,10 @@ The reminder or the notification by anonymous is sent with
 
 ### Subject shortening
 
-For issue notifications the plugin compares the mail domain of the recipient
-with the domain of the generated "From:" address. If they differ, the issue
-subject is dropped and only `[Project - Tracker #123] ` remains as the mail
-subject.
+For issue notifications the plugin compares the mail domains of the recipients
+with the domain of the generated "From:" address. If any of them differs, the
+issue subject is dropped and only `[Project - Tracker #123] ` remains as the
+mail subject.
 
 ### Notes
 

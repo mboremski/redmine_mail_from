@@ -36,14 +36,18 @@ module RedmineMailFrom
 
       if @issue
         listid = "<#{@issue.project.identifier}.#{host}>"
-        to = headers[:to]
-        if to.is_a? User
-          u = headers[:to]
-        else
-          u = headers[:to][0]
+
+        # headers[:to] may be a User, an array of Users and/or strings, nil or
+        # empty. Mailer.email_addresses resolves all of them to addresses.
+        from_domain = mail_from_domain(from)
+        to_domains = self.class.email_addresses(headers[:to]).map do |address|
+          mail_from_domain(address)
         end
-        if u.mail.split("@").last.upcase != from.split("@").last.upcase
-          headers[:subject] = "[#{@issue.project.name} - #{@issue.tracker.name} ##{@issue.id}] "
+
+        if from_domain.blank? || to_domains.empty? ||
+           to_domains.any? { |domain| domain != from_domain }
+          headers[:subject] =
+            "[#{@issue.project.name} - #{@issue.tracker.name} ##{@issue.id}] "
         end
       else
         listid = "<#{host}>"
@@ -55,6 +59,21 @@ module RedmineMailFrom
       headers['List-Id'] = listid
 
       super(headers, &block)
+    end
+
+    private
+
+    # Domain of a mail address, downcased, or nil.
+    #
+    # address.split('@').last returns the domain with a trailing '>' whenever
+    # the address carries a display name -- which is what the placeholder form
+    # "%f %l <%m>" produces.
+    def mail_from_domain(address)
+      return nil if address.blank?
+
+      Mail::Address.new(address.to_s).domain.presence&.downcase
+    rescue StandardError
+      address.to_s[/@([^@>\s]+)/, 1]&.downcase
     end
   end
 end
