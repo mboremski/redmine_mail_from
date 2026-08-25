@@ -3,9 +3,6 @@
   display: none;
 }
 
-#mail-from-list {
-}
-
 .mail-from-item {
   display: block;
 }
@@ -33,10 +30,22 @@ a.mail-from-delete:hover {
 </style>
 
 <script type="text/javascript">
+//<![CDATA[
 $(function() {
+  // Redmine 6 renders icons as an SVG sprite. The CSS classes alone no longer
+  // produce a visible icon: .icon and .icon-only are display:inline-flex
+  // without padding or size, so the .icon-edit:not(:has(svg)) fallback to
+  // edit.png has no box to paint on. Build the sprite markup server side.
+  var icons = {
+    add:    '<%= escape_javascript sprite_icon('add') %>',
+    edit:   '<%= escape_javascript sprite_icon('edit') %>',
+    del:    '<%= escape_javascript sprite_icon('del') %>',
+    handle: '<%= escape_javascript sprite_icon('reorder', '') %>'
+  };
+
   var input = function(val) {
-    var text = '<%= l(:setting_mail_from) %>\n' +
-        '(%f: <%= l(:field_firstname) %>, %l: <%= l(:field_lastname) %>, %m: <%= l(:field_mail) %>, %u: <%= l(:field_login) %>)';
+    var text = '<%= escape_javascript l(:setting_mail_from) %>\n' +
+        '(%f: <%= escape_javascript l(:field_firstname) %>, %l: <%= escape_javascript l(:field_lastname) %>, %m: <%= escape_javascript l(:field_mail) %>, %u: <%= escape_javascript l(:field_login) %>)';
 
     return window.prompt(text, val);
   };
@@ -47,9 +56,12 @@ $(function() {
         '<span class="mail-from-val">' +
         $('<span>').text(val).html() +
         '</span>' + ' ' +
-        '<span class="sort-handle mail-from-handle"></span>' + ' ' +
-        '<a class="icon-only icon-edit mail-from-edit" href="javascript:void(0)"></a>' + ' ' +
-        '<a class="icon-only icon-del mail-from-delete" href="javascript:void(0)"></a>' +
+        '<span class="icon-only icon-sort-handle sort-handle mail-from-handle" title="<%= escape_javascript l(:button_sort) %>">' +
+        icons.handle + '</span>' + ' ' +
+        '<a class="icon-only icon-edit mail-from-edit" href="#">' +
+        icons.edit + '</a>' + ' ' +
+        '<a class="icon-only icon-del mail-from-delete" href="#">' +
+        icons.del + '</a>' +
         '</span>';
 
     $('#mail-from-list').append(content);
@@ -65,20 +77,25 @@ $(function() {
     $('#settings_mail_from').val(item.join(' :: '));
   };
 
+  var field = $('#settings_mail_from');
+  if (field.length === 0) { return; }
+
   var mailFromContent = '<span id="mail-from-list"></span>' +
       '<span id="mail-from-add">' +
-      '<a class="icon icon-add" href="javascript:void(0)">' +
-      '<%= l(:label_email_address_add) %>' +
+      '<a class="icon icon-add" href="#">' + icons.add +
+      '<span class="icon-label"><%= escape_javascript l(:label_email_address_add) %></span>' +
       '</a></span>' +
-      '<em class="info">%p: <%= l(:field_project) %>,&ensp;%f: <%= l(:field_firstname) %>,&ensp; %l: <%= l(:field_lastname) %>,&ensp;%m: <%= l(:field_mail) %>,&ensp;%u: <%= l(:field_login) %></em>';
+      '<em class="info">%p: <%= escape_javascript l(:field_project) %>,&ensp;%f: <%= escape_javascript l(:field_firstname) %>,&ensp; %l: <%= escape_javascript l(:field_lastname) %>,&ensp;%m: <%= escape_javascript l(:field_mail) %>,&ensp;%u: <%= escape_javascript l(:field_login) %></em>';
 
-  $('#settings_mail_from').after(mailFromContent);
+  field.after(mailFromContent);
 
-  $('#settings_mail_from').val().split(/\s*::\s*/).forEach(function(val) {
+  (field.val() || '').split(/\s*::\s*/).forEach(function(val) {
     if (val) append(val);
   });
 
-  $('#mail-from-add a').on('click', function() {
+  $('#mail-from-add a').on('click', function(e) {
+    e.preventDefault();
+
     var val = input('');
 
     if (val) {
@@ -88,6 +105,8 @@ $(function() {
   });
 
   $('#mail-from-list').on('click', 'a.mail-from-edit', function(e) {
+    e.preventDefault();
+
     var item = $(e.currentTarget).parent().children('span.mail-from-val');
 
     var val = input(item.text());
@@ -99,6 +118,8 @@ $(function() {
   });
 
   $('#mail-from-list').on('click', 'a.mail-from-delete', function(e) {
+    e.preventDefault();
+
     $(e.currentTarget).parent().remove();
     update();
   });
@@ -109,4 +130,5 @@ $(function() {
     update: update
   });
 });
+//]]>
 </script>

@@ -2,7 +2,7 @@ Redmine::Plugin.register :redmine_mail_from do
   name 'Redmine Mail From plugin'
   author 'Takeshi Nakamura, Alexey Smirnov'
   description 'Extends mail "From:" header field'
-  version '3.1.0'
+  version '3.1.1'
   url 'https://github.com/apsmir/redmine_mail_from'
   author_url 'https://github.com/apsmir'
   requires_redmine :version_or_higher => '6.1'
