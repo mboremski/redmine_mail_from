@@ -49,7 +49,9 @@ module RedmineMailFrom
         listid = "<#{host}>"
       end
 
-      headers['From'] = from
+      # An empty From header is invalid and cannot be corrected by Redmine's
+      # own reverse_merge! once the key exists.
+      headers['From'] = from if from.present?
       headers['List-Id'] = listid
 
       super(headers, &block)
